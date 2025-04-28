@@ -1,0 +1,6 @@
+# .env 파일 관련
+.env
+.env.*
+!.env.sample
+
+tmp/*

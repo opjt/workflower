@@ -10,7 +10,6 @@ import (
 )
 
 type MRTemplateData struct {
-	Title           string
 	AuthorName      string
 	AuthorUsername  string
 	AppID           string
@@ -35,7 +34,6 @@ func BuildSwitMRMessage(dto gitlab.MergeRequestWebhookDTO) (string, error) {
 	timeStr := createdAt.Format("15:04")
 
 	data := MRTemplateData{
-		Title:           "Merge Request",
 		AuthorName:      dto.User.Name,
 		AuthorUsername:  dto.User.Username,
 		AppID:           appID,

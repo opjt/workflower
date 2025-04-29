@@ -164,7 +164,7 @@ func (g *SwitGateway) ApiCall(url string, body interface{}) error {
 
 	if resp.StatusCode == http.StatusUnauthorized || resp.StatusCode == http.StatusForbidden {
 		fmt.Println("Token expired or invalid, refreshing token...")
-		newAccessToken, err := g.GetToken("some_code_here")
+		newAccessToken, err := g.GetToken(lib.NewEnv().SwitCode)
 		if err != nil {
 			return err
 		}

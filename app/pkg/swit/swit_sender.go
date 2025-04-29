@@ -8,11 +8,11 @@ import (
 func (switApi *SwitGateway) SendChannel(channelID, messageContent string) error {
 	var value json.RawMessage = json.RawMessage(messageContent)
 
-	body := map[string]interface{}{
+	body := map[string]any{
 		"channel_id": channelID,
 		"content":    " ",
 		"body_type":  "plain",
-		"attachments": []map[string]interface{}{
+		"attachments": []map[string]any{
 			{
 				"attachment_type": "custom",
 				"values":          []json.RawMessage{value},

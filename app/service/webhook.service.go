@@ -59,7 +59,7 @@ func (s WebhookService) Gitlab(c *gin.Context) {
 			return
 		}
 		s.logger.Info("MR event:", webhook)
-		if err := s.switApi.SendChannel("25040800002914X1A5DZ", message); err != nil {
+		if err := s.switApi.SendChannel(lib.NewEnv().ChannelId, message); err != nil {
 			s.logger.Error(err)
 		}
 	// case "push":

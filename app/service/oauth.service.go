@@ -53,5 +53,5 @@ func (s OauthService) Callback(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "accessToken not found"})
 		return
 	}
-	c.JSON(200, gin.H{"message": "good response"})
+	c.JSON(200, gin.H{"code": code})
 }

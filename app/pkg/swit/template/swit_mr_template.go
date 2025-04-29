@@ -3,7 +3,7 @@ package template
 const MRTemplate = `
 {
   "header": {
-    "title": "Merge Request: {{.Title}}",
+    "title": "Merge Request",
     "subtitle": "Author: {{.AuthorName}} ({{.AuthorUsername}})",
     "app_id": "{{.AppID}}",
     "icon": {

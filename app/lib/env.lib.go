@@ -13,6 +13,7 @@ type Env struct {
 	LogOutput    string `mapstructure:"LOG_OUTPUT"`
 	LogLevel     string `mapstructure:"LOG_LEVEL"`
 	ClientId     string `mapstructure:"CLIENTID"`
+	ChannelId    string `mapstructure:"CHANNELID"`
 	ClientSecret string `mapstructure:"CLIENT_SECRET_KEY"`
 	SwitCode     string `mapstructure:"SWIT_CODE"`
 	ServerUrl    string `mapstructure:"SERVER_URL"`

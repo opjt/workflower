@@ -23,8 +23,8 @@ func (s TestService) Test(c *gin.Context) {
 	url := "https://openapi.swit.io/v1/api/message.create" // 호출하려는 URL
 	body := map[string]interface{}{
 		"body_type":  "plain",
-		"channel_id": "25040800002914X1A5DZ",
-		"content":    "hi",
+		"channel_id": lib.NewEnv().ChannelId,
+		"content":    "?",
 	}
 
 	// ApiCall 함수 호출

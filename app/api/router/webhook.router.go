@@ -28,7 +28,7 @@ func NewWebhookRoutes(
 func (r WebhookRoutes) Setup() {
 	gitlabRoutes := r.engine.ApiGroup.Group("/webhook/gitlab")
 	{
-		gitlabRoutes.GET("", r.webhookService.Gitlab)
+		gitlabRoutes.POST("", r.webhookService.Gitlab)
 
 	}
 }

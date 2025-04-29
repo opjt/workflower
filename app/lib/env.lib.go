@@ -16,6 +16,7 @@ type Env struct {
 	ClientSecret string `mapstructure:"CLIENT_SECRET_KEY"`
 	SwitCode     string `mapstructure:"SWIT_CODE"`
 	ServerUrl    string `mapstructure:"SERVER_URL"`
+	AppId        string `mapstructure:"APPID"`
 }
 
 var (

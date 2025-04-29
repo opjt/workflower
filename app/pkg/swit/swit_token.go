@@ -133,7 +133,7 @@ func (g *SwitGateway) refreshToken() (TokenResponse, error) {
 }
 
 // ApiCall 함수: Swit API를 호출하는 함수
-func (g *SwitGateway) ApiCall(url string, body map[string]interface{}) error {
+func (g *SwitGateway) ApiCall(url string, body interface{}) error {
 	accessToken := g.tokenStore.AccessToken
 	jsonBody, err := json.Marshal(body)
 	if err != nil {

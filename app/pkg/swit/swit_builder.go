@@ -24,14 +24,14 @@ type MRTemplateData struct {
 }
 
 func BuildSwitMRMessage(dto gitlab.MergeRequestWebhookDTO) (string, error) {
-	appID := lib.NewEnv().AppId
+	appID := lib.NewEnv().Swit.AppId
 	tmpl, err := template.New("switMR").Parse(switTemplate.MRTemplate)
 	if err != nil {
 		return "", err
 	}
 
 	createdAt, _ := time.Parse(time.RFC3339, dto.ObjectAttributes.UpdatedAt)
-	timeStr := createdAt.Format("15:04")
+	timeStr := createdAt.Format("11:11")
 
 	data := MRTemplateData{
 		AuthorName:      dto.User.Name,

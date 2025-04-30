@@ -124,18 +124,18 @@ func (l *FxLogger) LogEvent(event fxevent.Event) {
 func newLogger(env Env) Logger {
 
 	config := zap.NewDevelopmentConfig()
-	logOutput := env.LogOutput
+	logOutput := env.Log.Output
 
-	if env.Environment == "development" {
+	if env.Server.Environment == "development" {
 		fmt.Println("encode level")
 		config.EncoderConfig.EncodeLevel = zapcore.CapitalColorLevelEncoder
 	}
 
-	if env.Environment == "production" && logOutput != "" {
+	if env.Server.Environment == "production" && logOutput != "" {
 		config.OutputPaths = []string{logOutput}
 	}
 
-	logLevel := env.LogLevel
+	logLevel := env.Log.Level
 	level := zap.PanicLevel
 	switch logLevel {
 	case "debug":

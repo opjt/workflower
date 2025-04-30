@@ -8,66 +8,70 @@ import (
 	"gom/app/lib"
 	"io"
 	"net/http"
-	"time"
 )
 
 type SwitGateway struct {
 	logger     lib.Logger
 	tokenStore TokenStore
 	env        lib.Env
+	client     *http.Client
 }
 
 // TokenStore 구조체: 액세스 토큰과 리프레시 토큰을 저장
 type TokenStore struct {
 	AccessToken  string
 	RefreshToken string
-	Expiry       time.Time
 }
 
 // TokenResponse 구조체: API에서 받은 토큰 응답을 저장
 type TokenResponse struct {
 	AccessToken  string `json:"access_token"`
 	RefreshToken string `json:"refresh_token"`
-	ExpiresIn    int    `json:"expires_in"`
+}
+
+func (t TokenStore) String() string {
+	return fmt.Sprintf("AccessToken: %s\nRefreshToken: %s", t.AccessToken, t.RefreshToken)
 }
 
 // SwitGateway 생성자
 func NewSwitGateway(logger lib.Logger) *SwitGateway {
+	env := lib.NewEnv()
 	return &SwitGateway{
 		logger:     logger,
-		tokenStore: TokenStore{},
-		env:        lib.NewEnv(),
+		tokenStore: TokenStore{AccessToken: env.Swit.AccessToken, RefreshToken: env.Swit.RefreshToken},
+		env:        env,
+		client:     &http.Client{},
 	}
 }
 
-// GetToken 함수: 액세스 토큰을 얻거나 리프레시 토큰을 사용하여 새 토큰을 얻는 함수
-func (g *SwitGateway) GetToken(code string) (string, error) {
-	// 만약 액세스 토큰이 존재하고 만료되지 않았다면 기존 토큰을 반환
-	if g.tokenStore.AccessToken != "" && time.Now().Before(g.tokenStore.Expiry) {
-		return g.tokenStore.AccessToken, nil
+func (g *SwitGateway) GetToken(code string) (TokenStore, error) {
+
+	if g.tokenStore.AccessToken != "" {
+		return g.tokenStore, nil
 	}
 
-	// 액세스 토큰이 없거나 만료되었다면 새로 얻어야 함
 	var tokenResponse TokenResponse
 	var err error
 
-	// 액세스 토큰이 만료되었으면 리프레시 토큰을 사용하여 새로운 토큰을 요청
-	if g.tokenStore.RefreshToken != "" {
+	switch {
+	case g.tokenStore.RefreshToken != "":
 		tokenResponse, err = g.refreshToken()
-	} else {
+	case code != "":
 		tokenResponse, err = g.requestToken(code)
+	default:
+		return TokenStore{}, errors.New("no refresh token or code available to get new token")
 	}
 
 	if err != nil {
-		return "", err
+		return TokenStore{}, err
 	}
 
 	// 새로 얻은 토큰을 메모리에 저장
 	g.tokenStore.AccessToken = tokenResponse.AccessToken
 	g.tokenStore.RefreshToken = tokenResponse.RefreshToken
-	g.tokenStore.Expiry = time.Now().Add(time.Second * time.Duration(tokenResponse.ExpiresIn))
 
-	return g.tokenStore.AccessToken, nil
+	g.logger.Info("Generate Token\n", g.tokenStore)
+	return g.tokenStore, nil
 }
 
 // requestToken 함수: authorization code로 처음 액세스 토큰을 요청하는 함수
@@ -75,7 +79,7 @@ func (g *SwitGateway) requestToken(code string) (TokenResponse, error) {
 	tokenURL := "https://openapi.swit.io/oauth/token"
 	tokenData := fmt.Sprintf(
 		"grant_type=authorization_code&client_id=%s&client_secret=%s&redirect_uri=%s/api/v1/oauth/callback&code=%s",
-		g.env.ClientId, g.env.ClientSecret, g.env.ServerUrl, code,
+		g.env.Swit.ClientId, g.env.Swit.ClientSecret, g.env.Server.Url, code,
 	)
 
 	resp, err := http.Post(tokenURL, "application/x-www-form-urlencoded", bytes.NewBuffer([]byte(tokenData)))
@@ -103,10 +107,11 @@ func (g *SwitGateway) requestToken(code string) (TokenResponse, error) {
 
 // refreshToken 함수: 리프레시 토큰으로 새로운 액세스 토큰을 요청하는 함수
 func (g *SwitGateway) refreshToken() (TokenResponse, error) {
+	g.logger.Info("Token expired or invalid, refreshing token...")
 	tokenURL := "https://openapi.swit.io/oauth/token"
 	tokenData := fmt.Sprintf(
 		"grant_type=refresh_token&client_id=%s&client_secret=%s&refresh_token=%s",
-		g.env.ClientId, g.env.ClientSecret, g.tokenStore.RefreshToken,
+		g.env.Swit.ClientId, g.env.Swit.ClientSecret, g.tokenStore.RefreshToken,
 	)
 
 	resp, err := http.Post(tokenURL, "application/x-www-form-urlencoded", bytes.NewBuffer([]byte(tokenData)))
@@ -132,7 +137,6 @@ func (g *SwitGateway) refreshToken() (TokenResponse, error) {
 	return tokenResponse, nil
 }
 
-// ApiCall 함수: Swit API를 호출하는 함수
 func (g *SwitGateway) ApiCall(url string, body interface{}) error {
 	accessToken := g.tokenStore.AccessToken
 	jsonBody, err := json.Marshal(body)
@@ -150,7 +154,7 @@ func (g *SwitGateway) ApiCall(url string, body interface{}) error {
 	}
 	req.Header.Set("Content-Type", "application/json")
 
-	client := &http.Client{}
+	client := g.client
 	resp, err := client.Do(req)
 	if err != nil {
 		return err
@@ -163,31 +167,18 @@ func (g *SwitGateway) ApiCall(url string, body interface{}) error {
 	}
 
 	if resp.StatusCode == http.StatusUnauthorized || resp.StatusCode == http.StatusForbidden {
-		fmt.Println("Token expired or invalid, refreshing token...")
-		newAccessToken, err := g.GetToken(lib.NewEnv().SwitCode)
+		g.tokenStore.AccessToken = ""
+		newToken, err := g.GetToken("")
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to refresh token: %w", err)
 		}
+		g.tokenStore.AccessToken = newToken.AccessToken
+		g.tokenStore.RefreshToken = newToken.RefreshToken
 
-		req, err = http.NewRequest("POST", url, bytes.NewBuffer(jsonBody))
-		if err != nil {
-			return err
-		}
-		req.Header.Set("Authorization", "Bearer "+newAccessToken)
-		req.Header.Set("Content-Type", "application/json")
-
-		resp, err = client.Do(req)
-		if err != nil {
-			return err
-		}
-		defer resp.Body.Close()
-
-		bodyResp, err = io.ReadAll(resp.Body)
-		if err != nil {
-			return err
-		}
+		// 재귀 호출: 실패하면 그냥 에러 리턴됨
+		return g.ApiCall(url, body)
 	}
 
-	fmt.Println("API Response:", string(bodyResp))
+	g.logger.Info("✅ API Response:", string(bodyResp))
 	return nil
 }

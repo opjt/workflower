@@ -2,22 +2,37 @@ package lib
 
 import (
 	"log"
+	"strings"
 	"sync"
 
 	"github.com/spf13/viper"
 )
 
 type Env struct {
-	ServerPort   string `mapstructure:"SERVER_PORT"`
-	Environment  string `mapstructure:"ENV"`
-	LogOutput    string `mapstructure:"LOG_OUTPUT"`
-	LogLevel     string `mapstructure:"LOG_LEVEL"`
-	ClientId     string `mapstructure:"CLIENTID"`
-	ChannelId    string `mapstructure:"CHANNELID"`
+	Server ServerConfig
+	Log    LogConfig
+	Swit   SwitConfig
+}
+
+type ServerConfig struct {
+	Port        string `mapstructure:"PORT"`
+	Environment string `mapstructure:"ENV"`
+	Url         string `mapstructure:"URL"`
+}
+
+type LogConfig struct {
+	Output string `mapstructure:"OUTPUT"`
+	Level  string `mapstructure:"LEVEL"`
+}
+
+type SwitConfig struct {
+	ClientId     string `mapstructure:"CLIENT_ID"`
 	ClientSecret string `mapstructure:"CLIENT_SECRET_KEY"`
-	SwitCode     string `mapstructure:"SWIT_CODE"`
-	ServerUrl    string `mapstructure:"SERVER_URL"`
-	AppId        string `mapstructure:"APPID"`
+	ChannelId    string `mapstructure:"CHANNEL_ID"`
+	AccessToken  string `mapstructure:"ACCESS_TOKEN"`
+	RefreshToken string `mapstructure:"REFRESH_TOKEN"`
+	AppId        string `mapstructure:"APP_ID"`
+	// Code         string `mapstructure:"CODE"`
 }
 
 var (
@@ -28,6 +43,8 @@ var (
 // LoadEnv loads environment variables from .env file
 func LoadEnv() (Env, error) {
 	viper.SetConfigFile(".env")
+	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+	viper.AutomaticEnv()
 
 	err := viper.ReadInConfig()
 	if err != nil {

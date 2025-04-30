@@ -24,9 +24,9 @@ func NewOauthService(logger lib.Logger, switApi *swit.SwitGateway) OauthService 
 
 func (s OauthService) Oauth(c *gin.Context) {
 	env := lib.NewEnv()
-	clientID := env.ClientId
+	clientID := env.Swit.ClientId
 
-	redirectURI := fmt.Sprintf("%s/api/v1/oauth/callback", env.ServerUrl)
+	redirectURI := fmt.Sprintf("%s/api/v1/oauth/callback", env.Server.Url)
 
 	scope := "task:write channel:write message:write app:install"
 
@@ -48,10 +48,11 @@ func (s OauthService) Callback(c *gin.Context) {
 	// 여기서 code를 저장하거나, 바로 token 요청 보내기
 	fmt.Println("Authorization Code:", code)
 
-	_, err := s.switApi.GetToken(code)
+	token, err := s.switApi.GetToken(code)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "accessToken not found"})
 		return
 	}
-	c.JSON(200, gin.H{"code": code})
+
+	c.JSON(200, token)
 }

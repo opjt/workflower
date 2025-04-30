@@ -43,10 +43,10 @@ func Run() any {
 
 		logger.Info("Running server")
 
-		if env.ServerPort == "" {
+		if env.Server.Port == "" {
 			_ = engine.Gin.Run()
 		} else {
-			_ = engine.Gin.Run(":" + env.ServerPort)
+			_ = engine.Gin.Run(":" + env.Server.Port)
 		}
 	}
 }

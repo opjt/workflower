@@ -1,6 +1,7 @@
 package lib
 
 import (
+	"fmt"
 	"log"
 	"strings"
 	"sync"
@@ -39,7 +40,6 @@ var (
 	env  Env
 )
 
-// LoadEnv loads environment variables from .env file
 func LoadEnv() (Env, error) {
 	viper.SetConfigFile(".env")
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
@@ -55,6 +55,10 @@ func LoadEnv() (Env, error) {
 	if err != nil {
 		log.Fatal("☠️ environment can't be loaded: ", err)
 		return env, err
+	}
+
+	if env.Server.Port != "" && env.Server.Url != "" {
+		env.Server.Url = fmt.Sprintf("%s:%s", env.Server.Url, env.Server.Port)
 	}
 
 	return env, nil

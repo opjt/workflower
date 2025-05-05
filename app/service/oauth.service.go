@@ -4,6 +4,7 @@ import (
 	"errors"
 	"workflower/app/lib"
 	"workflower/app/pkg/swit"
+	"workflower/app/pkg/swit/dto"
 )
 
 type OauthService struct {
@@ -26,4 +27,15 @@ func (s OauthService) SwitCallback(code string) (swit.TokenStore, error) {
 	}
 
 	return token, nil
+}
+
+func (s OauthService) SwitTest() (dto.SwitChannel, error) {
+
+	var channel dto.SwitChannel
+	channel, err := s.switApi.GetChannelInfo(lib.NewEnv().Swit.ChannelId)
+	if err != nil {
+		return channel, err
+	}
+
+	return channel, nil
 }

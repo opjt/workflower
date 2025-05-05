@@ -29,6 +29,7 @@ func (r OauthRoutes) Setup() {
 	{
 		oauthRoutes.GET("", r.oauthController.Swit)
 		oauthRoutes.GET("/callback", r.oauthController.SwitCallback)
+		oauthRoutes.GET("/test", r.oauthController.SwitTest)
 
 	}
 }

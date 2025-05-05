@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
+
 	"workflower/app/lib"
 )
 
@@ -54,10 +56,10 @@ func (g *SwitGateway) GetToken(code string) (TokenStore, error) {
 	var err error
 
 	switch {
-	case g.tokenStore.RefreshToken != "":
-		tokenResponse, err = g.refreshToken()
 	case code != "":
 		tokenResponse, err = g.requestToken(code)
+	case g.tokenStore.RefreshToken != "":
+		tokenResponse, err = g.refreshToken()
 	default:
 		return TokenStore{}, errors.New("no refresh token or code available to get new token")
 	}
@@ -137,48 +139,64 @@ func (g *SwitGateway) refreshToken() (TokenResponse, error) {
 	return tokenResponse, nil
 }
 
-func (g *SwitGateway) ApiCall(url string, body interface{}) error {
-	accessToken := g.tokenStore.AccessToken
-	jsonBody, err := json.Marshal(body)
-	if err != nil {
-		return err
+func (g *SwitGateway) ApiCall(httpMethod, targetUrl string, body map[string]any) ([]byte, error) {
+	var req *http.Request
+	var err error
+
+	if httpMethod == "GET" {
+		// GET 쿼리 파라미터 추가
+		if body != nil {
+			params := url.Values{}
+			for key, value := range body {
+				params.Add(key, fmt.Sprintf("%v", value))
+			}
+			targetUrl += "?" + params.Encode()
+		}
+		req, err = http.NewRequest("GET", targetUrl, nil)
+	} else {
+		// POST/PUT 등일 경우 JSON body 추가
+		jsonBody, err := json.Marshal(body)
+		if err != nil {
+			return nil, err
+		}
+		req, err = http.NewRequest(httpMethod, targetUrl, bytes.NewBuffer(jsonBody))
+		req.Header.Set("Content-Type", "application/json")
 	}
 
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonBody))
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	if accessToken != "" {
+	// Authorization 헤더 설정
+	if accessToken := g.tokenStore.AccessToken; accessToken != "" {
 		req.Header.Set("Authorization", "Bearer "+accessToken)
 	}
-	req.Header.Set("Content-Type", "application/json")
 
-	client := g.client
-	resp, err := client.Do(req)
+	// 요청 전송
+	resp, err := g.client.Do(req)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	defer resp.Body.Close()
 
 	bodyResp, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
+	// 인증 만료 시 토큰 갱신 후 재요청
 	if resp.StatusCode == http.StatusUnauthorized || resp.StatusCode == http.StatusForbidden {
 		g.tokenStore.AccessToken = ""
 		newToken, err := g.GetToken("")
 		if err != nil {
-			return fmt.Errorf("failed to refresh token: %w", err)
+			return nil, fmt.Errorf("failed to refresh token: %w", err)
 		}
 		g.tokenStore.AccessToken = newToken.AccessToken
 		g.tokenStore.RefreshToken = newToken.RefreshToken
 
-		// 재귀 호출: 실패하면 그냥 에러 리턴됨
-		return g.ApiCall(url, body)
+		// 재시도
+		return g.ApiCall(httpMethod, targetUrl, body)
 	}
 
-	g.logger.Info("✅ API Response:", string(bodyResp))
-	return nil
+	return bodyResp, nil
 }

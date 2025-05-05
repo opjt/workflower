@@ -1,6 +1,7 @@
 package api
 
 import (
+	"gom/app/api/controller"
 	"gom/app/api/middleware"
 	"gom/app/api/router"
 
@@ -10,4 +11,5 @@ import (
 var Module = fx.Options(
 	router.Module,
 	middleware.Module,
+	controller.Module,
 )

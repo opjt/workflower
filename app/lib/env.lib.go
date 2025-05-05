@@ -32,7 +32,6 @@ type SwitConfig struct {
 	AccessToken  string `mapstructure:"ACCESS_TOKEN"`
 	RefreshToken string `mapstructure:"REFRESH_TOKEN"`
 	AppId        string `mapstructure:"APP_ID"`
-	// Code         string `mapstructure:"CODE"`
 }
 
 var (
@@ -61,7 +60,6 @@ func LoadEnv() (Env, error) {
 	return env, nil
 }
 
-// NewEnv provides a single instance of Env, ensuring it's only loaded once
 func NewEnv() Env {
 
 	once.Do(func() {

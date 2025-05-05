@@ -1,12 +1,10 @@
-package swit
+package gitlab
 
 import (
 	"bytes"
 	"gom/app/lib"
 	switTemplate "gom/app/pkg/swit/template"
-	"gom/app/pkg/webhook/gitlab"
 	"text/template"
-	"time"
 )
 
 type MRTemplateData struct {
@@ -23,15 +21,15 @@ type MRTemplateData struct {
 	CreatedAt       string
 }
 
-func BuildSwitMRMessage(dto gitlab.MergeRequestWebhookDTO) (string, error) {
+func BuildSwitMRMessage(dto MergeRequestWebhookDTO) (string, error) {
 	appID := lib.NewEnv().Swit.AppId
 	tmpl, err := template.New("switMR").Parse(switTemplate.MRTemplate)
 	if err != nil {
 		return "", err
 	}
 
-	createdAt, _ := time.Parse(time.RFC3339, dto.ObjectAttributes.UpdatedAt)
-	timeStr := createdAt.Format("11:11")
+	updatedAt := dto.ObjectAttributes.UpdatedAt
+	timeStr := updatedAt[11:16] // "13:25"
 
 	data := MRTemplateData{
 		AuthorName:      dto.User.Name,

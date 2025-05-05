@@ -1,8 +1,8 @@
 package service
 
 import (
-	"gom/app/lib"
-	"gom/app/pkg/swit"
+	"workflower/app/lib"
+	"workflower/app/pkg/swit"
 
 	"github.com/gin-gonic/gin"
 )

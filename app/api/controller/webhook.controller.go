@@ -1,8 +1,8 @@
 package controller
 
 import (
-	"gom/app/lib"
-	"gom/app/service"
+	"workflower/app/lib"
+	"workflower/app/service"
 
 	"github.com/gin-gonic/gin"
 )

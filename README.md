@@ -1,14 +1,18 @@
-[기능]
 
-1. gitlab WEBHOOK 연동하여 channel에 정보 알림.
+# workflower
+>
+> swit(협업툴) 업무 관련 봇 서버
 
-- 유저가 스윗봇을 통해서 repository에 대한 스윗 채널을 선택할 수 있음
-    - !setting repository-url channel-id
-    - 설정하지 않을 경우 [Gitlab] 이라는 채널에 기본적으로 알림가도록
-    - 어차피 gitlab 단에서 웹훅을 컨트롤하는 거기 때문에 api서버는 정보를 받으면 채널에 정보만 넘기면 된다 (심플)
+## 기능
 
-2. 연차 명령어
+1. gitlab Webhook
+    - gitlab 이벤트를 전달받아서 지정한 swit channel에 알림 기능
+    - Merge Request 지원
 
-- 연차 등록, 연차 연동 
+## 실행 및 빌드
 
-3. 아지트 연동? 
+```bash
+vi .env
+$ go run main.go
+$ go build
+```

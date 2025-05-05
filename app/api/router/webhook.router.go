@@ -1,9 +1,9 @@
 package router
 
 import (
-	"gom/app/api/controller"
-	"gom/app/core"
-	"gom/app/lib"
+	"workflower/app/api/controller"
+	"workflower/app/core"
+	"workflower/app/lib"
 )
 
 type WebhookRoutes struct {

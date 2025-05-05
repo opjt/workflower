@@ -2,9 +2,9 @@ package gitlab
 
 import (
 	"bytes"
-	"gom/app/lib"
-	switTemplate "gom/app/pkg/swit/template"
 	"text/template"
+	"workflower/app/lib"
+	switTemplate "workflower/app/pkg/swit/template"
 )
 
 type MRTemplateData struct {

@@ -2,11 +2,11 @@ package bootstrap
 
 import (
 	"context"
-	"gom/app/api/middleware"
-	"gom/app/api/router"
-	"gom/app/core"
+	"workflower/app/api/middleware"
+	"workflower/app/api/router"
+	"workflower/app/core"
 
-	"gom/app/lib"
+	"workflower/app/lib"
 
 	"go.uber.org/fx"
 	"go.uber.org/fx/fxevent"

@@ -1,11 +1,11 @@
 package bootstrap
 
 import (
-	"gom/app/api"
-	"gom/app/core"
-	"gom/app/lib"
-	"gom/app/pkg"
-	"gom/app/service"
+	"workflower/app/api"
+	"workflower/app/core"
+	"workflower/app/lib"
+	"workflower/app/pkg"
+	"workflower/app/service"
 
 	"go.uber.org/fx"
 )

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"gom/app/core/bootstrap"
+	"workflower/app/core/bootstrap"
 
 	"github.com/joho/godotenv"
 )

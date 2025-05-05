@@ -3,8 +3,8 @@ package service
 import (
 	"encoding/json"
 	"errors"
-	"gom/app/lib"
-	"gom/app/pkg/webhook/gitlab"
+	"workflower/app/lib"
+	"workflower/app/pkg/webhook/gitlab"
 
 	"github.com/gin-gonic/gin"
 )

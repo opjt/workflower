@@ -1,9 +1,9 @@
 package api
 
 import (
-	"gom/app/api/controller"
-	"gom/app/api/middleware"
-	"gom/app/api/router"
+	"workflower/app/api/controller"
+	"workflower/app/api/middleware"
+	"workflower/app/api/router"
 
 	"go.uber.org/fx"
 )

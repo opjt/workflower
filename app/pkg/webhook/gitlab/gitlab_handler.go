@@ -3,8 +3,8 @@ package gitlab
 import (
 	"encoding/json"
 	"errors"
-	"gom/app/lib"
-	"gom/app/pkg/swit"
+	"workflower/app/lib"
+	"workflower/app/pkg/swit"
 )
 
 type GitlabHandler struct {

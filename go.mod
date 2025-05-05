@@ -1,4 +1,4 @@
-module gom
+module workflower
 
 go 1.24.2
 

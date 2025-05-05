@@ -1,9 +1,9 @@
 package router
 
 import (
-	"gom/app/core"
-	"gom/app/lib"
-	"gom/app/service"
+	"workflower/app/core"
+	"workflower/app/lib"
+	"workflower/app/service"
 )
 
 type Test2Routes struct {

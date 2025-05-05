@@ -1,8 +1,8 @@
 package pkg
 
 import (
-	"gom/app/pkg/swit"
-	"gom/app/pkg/webhook/gitlab"
+	"workflower/app/pkg/swit"
+	"workflower/app/pkg/webhook/gitlab"
 
 	"go.uber.org/fx"
 )

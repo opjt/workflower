@@ -1,7 +1,7 @@
 package core
 
 import (
-	"gom/app/lib"
+	"workflower/app/lib"
 
 	"github.com/gin-gonic/gin"
 )

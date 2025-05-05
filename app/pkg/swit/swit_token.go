@@ -48,16 +48,14 @@ func NewSwitGateway(logger lib.Logger) *SwitGateway {
 
 func (g *SwitGateway) GetToken(code string) (TokenStore, error) {
 
-	if g.tokenStore.AccessToken != "" {
-		return g.tokenStore, nil
-	}
-
 	var tokenResponse TokenResponse
 	var err error
 
 	switch {
 	case code != "":
 		tokenResponse, err = g.requestToken(code)
+	case g.tokenStore.AccessToken != "":
+		return g.tokenStore, nil
 	case g.tokenStore.RefreshToken != "":
 		tokenResponse, err = g.refreshToken()
 	default:
@@ -155,9 +153,9 @@ func (g *SwitGateway) ApiCall(httpMethod, targetUrl string, body map[string]any)
 		req, err = http.NewRequest("GET", targetUrl, nil)
 	} else {
 		// POST/PUT 등일 경우 JSON body 추가
-		jsonBody, err := json.Marshal(body)
-		if err != nil {
-			return nil, err
+		jsonBody, jsonErr := json.Marshal(body)
+		if jsonErr != nil {
+			return nil, jsonErr
 		}
 		req, err = http.NewRequest(httpMethod, targetUrl, bytes.NewBuffer(jsonBody))
 		req.Header.Set("Content-Type", "application/json")

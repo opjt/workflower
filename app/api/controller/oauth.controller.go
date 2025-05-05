@@ -35,6 +35,7 @@ func (o OauthController) Swit(c *gin.Context) {
 		"message:write",
 		"workspace:read",
 		"channel:read",
+		"subscriptions:read",
 		"app:install",
 	}
 

@@ -184,9 +184,13 @@ func (g *SwitGateway) ApiCall(httpMethod, targetUrl string, body map[string]any)
 		return nil, err
 	}
 	// TODO: app scope 아닐때 예외처리 필요
+	if resp.StatusCode == http.StatusBadRequest {
+		return nil, errors.New(string(bodyResp))
+	}
 
 	// 인증 만료 시 토큰 갱신 후 재요청
 	if resp.StatusCode == http.StatusUnauthorized || resp.StatusCode == http.StatusForbidden {
+
 		g.tokenStore.AccessToken = ""
 		newToken, err := g.GetToken("")
 		if err != nil {

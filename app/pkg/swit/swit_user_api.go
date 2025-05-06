@@ -16,12 +16,10 @@ func (switApi *SwitGateway) GetWorkspaceList() ([]dto.SwitWorkspace, error) {
 
 	responseBytes, err := switApi.ApiCall("GET", url, nil)
 	if err != nil {
-		switApi.logger.Error(err)
 		return nil, err
 	}
 
 	if err := json.Unmarshal(responseBytes, &result); err != nil {
-		switApi.logger.Error(err)
 		return nil, err
 	}
 

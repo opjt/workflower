@@ -31,4 +31,8 @@ func (r WebhookRoutes) Setup() {
 		gitlabRoutes.POST("", r.webhookController.Gitlab)
 
 	}
+	switRoutes := r.engine.ApiGroup.Group("/webhook/swit")
+	{
+		switRoutes.POST("/event", r.webhookController.SwitEvent)
+	}
 }

@@ -23,6 +23,8 @@ func NewOauthController(oauthService service.OauthService, logger lib.Logger) Oa
 }
 
 func (o OauthController) Swit(c *gin.Context) {
+	isApp := c.Query("type")
+
 	env := lib.NewEnv()
 	clientID := env.Swit.ClientId
 
@@ -36,7 +38,9 @@ func (o OauthController) Swit(c *gin.Context) {
 		"workspace:read",
 		"channel:read",
 		"subscriptions:read",
-		"app:install",
+	}
+	if isApp != "" {
+		scopes = append(scopes, "app:install")
 	}
 
 	scope := strings.Join(scopes, " ")

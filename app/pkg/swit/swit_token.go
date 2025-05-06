@@ -70,7 +70,7 @@ func (g *SwitGateway) GetToken(code string) (TokenStore, error) {
 	g.tokenStore.AccessToken = tokenResponse.AccessToken
 	g.tokenStore.RefreshToken = tokenResponse.RefreshToken
 
-	g.logger.Info("Generate Token\n", g.tokenStore)
+	g.logger.Info(fmt.Sprintf("Generate Token\nAccessToken:\n\n%s\n\nRefreshToken:\n\n%s", g.tokenStore.AccessToken, g.tokenStore.RefreshToken))
 	return g.tokenStore, nil
 }
 

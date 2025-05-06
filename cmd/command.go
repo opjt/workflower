@@ -38,7 +38,9 @@ type Command interface {
 }
 
 var cmds = map[string]Command{
-	"event": NewSwitChannelCommand(),
+	"channel":     NewSwitChannelCommand(),
+	"event:reset": NewSwitEventResetCommand(),
+	"event:set":   NewSwitEventRegisterCommand(),
 }
 
 // GetSubCommands gives a list of sub commands

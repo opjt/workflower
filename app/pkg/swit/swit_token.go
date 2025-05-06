@@ -144,8 +144,7 @@ func (g *SwitGateway) ApiCall(httpMethod, targetUrl string, body map[string]any)
 	var req *http.Request
 	var err error
 
-	if httpMethod == "GET" {
-		// GET 쿼리 파라미터 추가
+	if httpMethod == "GET" || httpMethod == "DELETE" {
 		if body != nil {
 			params := url.Values{}
 			for key, value := range body {
@@ -153,7 +152,7 @@ func (g *SwitGateway) ApiCall(httpMethod, targetUrl string, body map[string]any)
 			}
 			targetUrl += "?" + params.Encode()
 		}
-		req, err = http.NewRequest("GET", targetUrl, nil)
+		req, err = http.NewRequest(httpMethod, targetUrl, nil)
 	} else {
 		// POST/PUT 등일 경우 JSON body 추가
 		jsonBody, jsonErr := json.Marshal(body)
@@ -184,6 +183,7 @@ func (g *SwitGateway) ApiCall(httpMethod, targetUrl string, body map[string]any)
 	if err != nil {
 		return nil, err
 	}
+	// TODO: app scope 아닐때 예외처리 필요
 
 	// 인증 만료 시 토큰 갱신 후 재요청
 	if resp.StatusCode == http.StatusUnauthorized || resp.StatusCode == http.StatusForbidden {

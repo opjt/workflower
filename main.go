@@ -9,5 +9,6 @@ import (
 func main() {
 	_ = godotenv.Load()
 
-	bootstrap.RunServer(bootstrap.CommonModules)
+	//bootstrap.RunServer(bootstrap.CommonModules)
+	bootstrap.RootApp.Execute()
 }

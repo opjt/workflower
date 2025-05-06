@@ -45,6 +45,9 @@ func NewSwitGateway(logger lib.Logger) *SwitGateway {
 		client:     &http.Client{},
 	}
 }
+func (g *SwitGateway) SetAccessToken(token string) {
+	g.tokenStore.AccessToken = token
+}
 
 func (g *SwitGateway) GetToken(code string) (TokenStore, error) {
 
@@ -101,6 +104,7 @@ func (g *SwitGateway) requestToken(code string) (TokenResponse, error) {
 	if err := json.Unmarshal(body, &tokenResponse); err != nil {
 		return TokenResponse{}, err
 	}
+	fmt.Println(tokenResponse)
 
 	return tokenResponse, nil
 }

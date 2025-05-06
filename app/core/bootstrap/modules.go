@@ -17,3 +17,8 @@ var CommonModules = fx.Options(
 	pkg.Module,
 	fx.Provide(core.NewEngine),
 )
+
+var CmdModule = fx.Options(
+	lib.Module,
+	pkg.Module,
+)

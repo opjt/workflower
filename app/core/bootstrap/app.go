@@ -10,7 +10,7 @@ var rootCmd = &cobra.Command{
 	Use:              "work-flower",
 	Short:            "swit app",
 	Long:             `hello`,
-	TraverseChildren: true,
+	TraverseChildren: false,
 }
 
 // App root of application
@@ -22,7 +22,8 @@ func NewApp() App {
 	rootApp := App{
 		Command: rootCmd,
 	}
-	rootApp.AddCommand(cmd.GetSubCommands(CommonModules)...)
+	rootApp.AddCommand(cmd.WrapSubCommand("app:serve", cmd.NewServeCommand(), CommonModules))
+	rootApp.AddCommand(cmd.GetSubCommands(CmdModule)...)
 	return rootApp
 }
 

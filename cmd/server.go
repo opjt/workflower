@@ -17,7 +17,7 @@ func (s *ServeCommand) Short() string {
 
 func (s *ServeCommand) Setup(cmd *cobra.Command) {}
 
-func (s *ServeCommand) Run() CommandRunner {
+func (s *ServeCommand) Run(c *cobra.Command, args []string) CommandRunner {
 	return func(
 		middleware middleware.Middlewares,
 		env lib.Env,

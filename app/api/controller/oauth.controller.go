@@ -36,8 +36,11 @@ func (o OauthController) Swit(c *gin.Context) {
 		"channel:write",
 		"message:write",
 		"workspace:read",
+		"project:read",
 		"channel:read",
 		"subscriptions:read",
+		"subscriptions:write",
+		"channels.messages:read",
 	}
 	if isApp != "" {
 		scopes = append(scopes, "app:install")

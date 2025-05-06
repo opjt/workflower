@@ -104,7 +104,6 @@ func (g *SwitGateway) requestToken(code string) (TokenResponse, error) {
 	if err := json.Unmarshal(body, &tokenResponse); err != nil {
 		return TokenResponse{}, err
 	}
-	fmt.Println(tokenResponse)
 
 	return tokenResponse, nil
 }
